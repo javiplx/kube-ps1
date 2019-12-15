@@ -39,6 +39,7 @@ KUBE_PS1_BG_COLOR="${KUBE_PS1_BG_COLOR}"
 KUBE_PS1_KUBECONFIG_CACHE="${KUBECONFIG}"
 KUBE_PS1_DISABLE_PATH="${HOME}/.kube/kube-ps1/disabled"
 KUBE_PS1_LAST_TIME=0
+KUBE_PS1_LAST_DIR=$PWD
 KUBE_PS1_CLUSTER_FUNCTION="${KUBE_PS1_CLUSTER_FUNCTION}"
 KUBE_PS1_NAMESPACE_FUNCTION="${KUBE_PS1_NAMESPACE_FUNCTION}"
 
@@ -211,6 +212,13 @@ _kube_ps1_update_cache() {
   if [[ "${KUBECONFIG}" != "${KUBE_PS1_KUBECONFIG_CACHE}" ]]; then
     # User changed KUBECONFIG; unconditionally refetch.
     KUBE_PS1_KUBECONFIG_CACHE=${KUBECONFIG}
+    _kube_ps1_get_context_ns
+    return
+  fi
+
+  # Directory changed, refresh
+  if [[ "${KUBE_PS1_LAST_DIR}" != "${PWD}" ]] ; then
+    KUBE_PS1_LAST_DIR=${PWD}
     _kube_ps1_get_context_ns
     return
   fi
